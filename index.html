@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>シヅキ理解度チェック｜指月電機製作所</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4f8;
+  --white: #ffffff;
+  --border: #dde3ec;
+  --ink: #0d1b2a;
+  --ink-s: #2c3e50;
+  --muted: #64748b;
+  --muted-l: #94a3b8;
+  /* brand colors */
+  --brand: #003087;
+  --brand-m: #1d4ed8;
+  --brand-l: #eff6ff;
+  /* level colors */
+  --lv1: #0f766e;   --lv1-bg: #f0fdfa;  --lv1-border: #99f6e4;
+  --lv2: #b45309;   --lv2-bg: #fffbeb;  --lv2-border: #fcd34d;
+  --lv3: #7c3aed;   --lv3-bg: #f5f3ff;  --lv3-border: #c4b5fd;
+  --success: #16a34a;
+  --fail: #dc2626;
+  --shadow: 0 2px 12px rgba(13,27,42,0.10);
+  --shadow-d: 0 8px 32px rgba(13,27,42,0.18);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--brand);
+  color: white;
+  padding: 0 2rem;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-d);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-mark {
+  width: 34px; height: 34px;
+  background: white;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-text {
+  font-size: 1rem; font-weight: 900;
+  color: white; letter-spacing: 0.04em;
+}
+.logo-sub {
+  font-size: 0.7rem; color: rgba(255,255,255,0.65);
+  letter-spacing: 0.05em;
+}
+.header-right { display: flex; gap: 0.5rem; }
+.hbtn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  padding: 0.3rem 0.85rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.hbtn:hover, .hbtn.active { background: white; color: var(--brand); font-weight: 700; }
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── HOME ── */
+.hero {
+  background: var(--brand);
+  padding: 3rem 2rem 3.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: 'SHIZUKI';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8rem; font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.9);
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 1rem;
+  border-radius: 99px;
+  margin-bottom: 1.2rem;
+}
+.hero h1 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 700;
+  color: white;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+.hero p {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+.hero-stats {
+  display: inline-flex;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.hstat {
+  padding: 0.7rem 1.5rem;
+  border-right: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+}
+.hstat:last-child { border-right: none; }
+.hstat-val { font-size: 1.4rem; font-weight: 900; color: white; line-height: 1; }
+.hstat-lbl { font-size: 0.68rem; color: rgba(255,255,255,0.6); margin-top: 0.2rem; }
+
+.main-wrap { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+/* progress summary */
+.progress-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+@media(max-width:580px){ .progress-row { grid-template-columns: 1fr; } }
+.prog-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.prog-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-d); }
+.prog-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.prog-card.lv1::before { background: var(--lv1); }
+.prog-card.lv2::before { background: var(--lv2); }
+.prog-card.lv3::before { background: var(--lv3); }
+.prog-icon {
+  font-size: 2rem; flex-shrink: 0;
+}
+.prog-info { flex: 1; }
+.prog-level-name {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 0.2rem;
+}
+.lv1 .prog-level-name { color: var(--lv1); }
+.lv2 .prog-level-name { color: var(--lv2); }
+.lv3 .prog-level-name { color: var(--lv3); }
+.prog-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.4rem; }
+.prog-bar-outer {
+  background: var(--bg);
+  border-radius: 99px;
+  height: 6px;
+  overflow: hidden;
+}
+.prog-bar-inner {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+.lv1 .prog-bar-inner { background: var(--lv1); }
+.lv2 .prog-bar-inner { background: var(--lv2); }
+.lv3 .prog-bar-inner { background: var(--lv3); }
+.prog-score {
+  font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem;
+}
+
+/* level sections */
+.sec-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+/* ── QUIZ SCREEN ── */
+.quiz-wrap { max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem; }
+.quiz-top {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.back-btn {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--ink);
+  transition: all 0.15s;
+}
+.back-btn:hover { background: var(--ink); color: white; }
+.quiz-progress-info {
+  flex: 1;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.quiz-level-badge {
+  font-size: 0.7rem; font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 99px;
+  border: 1.5px solid;
+}
+.badge-lv1 { color: var(--lv1); border-color: var(--lv1); background: var(--lv1-bg); }
+.badge-lv2 { color: var(--lv2); border-color: var(--lv2); background: var(--lv2-bg); }
+.badge-lv3 { color: var(--lv3); border-color: var(--lv3); background: var(--lv3-bg); }
+.quiz-counter { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+
+.quiz-prog-bar {
+  background: var(--border);
+  border-radius: 99px;
+  height: 5px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+.quiz-prog-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+.fill-lv1 { background: var(--lv1); }
+.fill-lv2 { background: var(--lv2); }
+.fill-lv3 { background: var(--lv3); }
+
+.question-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1rem;
+}
+.q-number {
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.12em; color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.q-text {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.05rem; line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+.options { display: flex; flex-direction: column; gap: 0.6rem; }
+.option-btn {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.option-btn:hover:not(:disabled) {
+  border-color: var(--brand-m);
+  background: var(--brand-l);
+}
+.option-btn.correct {
+  background: #f0fdf4;
+  border-color: var(--success);
+  color: #166534;
+}
+.option-btn.incorrect {
+  background: #fef2f2;
+  border-color: var(--fail);
+  color: #991b1b;
+}
+.opt-label {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.option-btn.correct .opt-label {
+  background: var(--success); color: white; border-color: var(--success);
+}
+.option-btn.incorrect .opt-label {
+  background: var(--fail); color: white; border-color: var(--fail);
+}
+
+.answer-panel {
+  background: var(--ink);
+  color: white;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1rem;
+  display: none;
+}
+.answer-panel.show { display: block; animation: fadeIn 0.2s ease; }
+.answer-result {
+  font-weight: 700; font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.answer-result.ok { color: #4ade80; }
+.answer-result.ng { color: #f87171; }
+.answer-explanation {
+  font-size: 0.88rem; line-height: 1.8;
+  color: rgba(255,255,255,0.82);
+}
+
+.quiz-actions {
+  display: flex; gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.btn-next {
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.75rem;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-next:hover { background: var(--brand-m); }
+
+/* ── RESULT SCREEN ── */
+.result-wrap { max-width: 600px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+.result-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-d);
+  text-align: center;
+}
+.result-emoji { font-size: 3.5rem; margin-bottom: 0.75rem; }
+.result-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.4rem; font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.result-score {
+  font-size: 3.5rem; font-weight: 900;
+  line-height: 1; margin: 0.75rem 0;
+}
+.result-score span { font-size: 1.2rem; font-weight: 500; color: var(--muted); }
+.result-msg {
+  font-size: 0.9rem; color: var(--muted);
+  line-height: 1.8; margin-bottom: 2rem;
+}
+.result-breakdown {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+.breakdown-title {
+  font-size: 0.78rem; font-weight: 700;
+  color: var(--muted); letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+.breakdown-list { list-style: none; }
+.breakdown-list li {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px dotted var(--border);
+  font-size: 0.88rem;
+}
+.breakdown-list li:last-child { border-bottom: none; }
+.bd-correct { color: var(--success); font-weight: 700; }
+.bd-wrong { color: var(--fail); font-weight: 700; }
+.result-btns { display: flex; flex-direction: column; gap: 0.65rem; }
+.btn-retry {
+  background: var(--brand);
+  color: white; border: none;
+  border-radius: 9px;
+  padding: 0.85rem;
+  font-family: inherit;
+  font-size: 0.92rem; font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-retry:hover { background: var(--brand-m); }
+.btn-home {
+  background: none;
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  padding: 0.85rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-home:hover { background: var(--bg); }
+
+/* toast */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--ink); color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 99px;
+  font-size: 0.85rem; font-weight: 700;
+  box-shadow: var(--shadow-d);
+  transition: transform 0.3s ease;
+  z-index: 999; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* reset modal */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,27,42,0.6);
+  z-index: 200; align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: var(--white); border-radius: 14px;
+  padding: 2rem 2.5rem; max-width: 340px; width: 90%;
+  box-shadow: var(--shadow-d); text-align: center;
+  animation: fadeIn 0.2s ease;
+}
+.modal-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.modal-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.5rem; }
+.modal-btns { display: flex; gap: 0.75rem; justify-content: center; }
+.btn-cancel {
+  background: none; border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 0.6rem 1.3rem;
+  font-family: inherit; font-size: 0.88rem; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-cancel:hover { background: var(--bg); }
+.btn-danger {
+  background: var(--fail); color: white; border: none;
+  border-radius: 8px; padding: 0.6rem 1.3rem;
+  font-family: inherit; font-size: 0.88rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-danger:hover { background: #b91c1c; }
+
+/* email form */
+.email-form-wrap {
+  background: var(--lv1-bg);
+  border: 2px solid var(--lv1-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+.email-form-title {
+  font-size: 1rem; font-weight: 700;
+  color: var(--lv1);
+  margin-bottom: 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.email-form-desc {
+  font-size: 0.85rem; color: var(--muted);
+  line-height: 1.7; margin-bottom: 1rem;
+}
+.email-input-group {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.email-input-group label {
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--ink);
+}
+.email-input-group input {
+  padding: 0.7rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+}
+.email-input-group input:focus {
+  outline: none;
+  border-color: var(--lv1);
+  background: white;
+}
+.email-btn-group {
+  display: flex; gap: 0.75rem;
+}
+.btn-send-email {
+  flex: 1;
+  background: var(--lv1);
+  color: white; border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-family: inherit;
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-send-email:hover { background: #0d9488; }
+.btn-skip-email {
+  background: white;
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-skip-email:hover { background: var(--bg); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <div class="logo-mark">⚡</div>
+    <div>
+      <div class="logo-text">SHIZUKI 理解度チェック</div>
+      <div class="logo-sub">株式会社 指月電機製作所</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="hbtn active" onclick="showScreen('home')">ホーム</button>
+    <button class="hbtn" onclick="confirmReset()">リセット</button>
+  </div>
+</header>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">Company Knowledge Quiz</div>
+      <h1>シヅキを、どれだけ知っていますか？</h1>
+      <p>新卒・キャリア・ベテランを問わず、3つのレベルで自社理解度を確認しよう。<br>全問正解を目指して挑戦！</p>
+      <div class="hero-stats">
+        <div class="hstat">
+          <div class="hstat-val">3</div>
+          <div class="hstat-lbl">レベル</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-val">30</div>
+          <div class="hstat-lbl">総問題数</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-val" id="total-cleared">0</div>
+          <div class="hstat-lbl">クリア問題</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <div class="progress-row">
+      <div class="prog-card lv1" onclick="startQuiz(1)">
+        <div class="prog-icon">🌱</div>
+        <div class="prog-info">
+          <div class="prog-level-name">Level 1</div>
+          <div class="prog-title">基礎知識</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem;">自社のことがわかるレベル</div>
+          <div class="prog-bar-outer">
+            <div class="prog-bar-inner" id="bar-lv1" style="width:0%"></div>
+          </div>
+          <div class="prog-score" id="score-lv1">0 / 10 正解</div>
+        </div>
+      </div>
+      <div class="prog-card lv2" onclick="startQuiz(2)">
+        <div class="prog-icon">🌿</div>
+        <div class="prog-info">
+          <div class="prog-level-name">Level 2</div>
+          <div class="prog-title">実務知識</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem;">外部に自社を説明できるレベル</div>
+          <div class="prog-bar-outer">
+            <div class="prog-bar-inner" id="bar-lv2" style="width:0%"></div>
+          </div>
+          <div class="prog-score" id="score-lv2">0 / 10 正解</div>
+        </div>
+      </div>
+      <div class="prog-card lv3" onclick="startQuiz(3)">
+        <div class="prog-icon">🌳</div>
+        <div class="prog-info">
+          <div class="prog-level-name">Level 3</div>
+          <div class="prog-title">深掘り知識</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem;">ここまで知れば素晴らしい</div>
+          <div class="prog-bar-outer">
+            <div class="prog-bar-inner" id="bar-lv3" style="width:0%"></div>
+          </div>
+          <div class="prog-score" id="score-lv3">0 / 10 正解</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-wrap">
+    <div class="quiz-top">
+      <button class="back-btn" onclick="showScreen('home')">← 戻る</button>
+      <div class="quiz-progress-info">
+        <span class="quiz-level-badge" id="quiz-badge"></span>
+        <span class="quiz-counter" id="quiz-counter"></span>
+      </div>
+    </div>
+    <div class="quiz-prog-bar">
+      <div class="quiz-prog-fill" id="quiz-prog-fill" style="width:0%"></div>
+    </div>
+    <div id="quiz-content"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="result-wrap">
+    <div class="result-card">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <div class="result-breakdown">
+        <div class="breakdown-title">問題別結果</div>
+        <ul class="breakdown-list" id="breakdown-list"></ul>
+      </div>
+      
+      <!-- メールフォーム (Level 1 で 5点以上の場合のみ表示) -->
+      <div class="email-form-wrap" id="email-form-wrap" style="display:none;">
+        <div class="email-form-title">
+          📧 結果をメールで報告
+        </div>
+        <div class="email-form-desc">
+          Level 1で5点以上取得されました！結果を報告いただけます。お名前とメールアドレスを入力してください。
+        </div>
+        <div class="email-input-group">
+          <label>お名前</label>
+          <input type="text" id="user-name" placeholder="例: 山田太郎">
+        </div>
+        <div class="email-input-group">
+          <label>メールアドレス</label>
+          <input type="email" id="user-email" placeholder="例: yamada@example.com">
+        </div>
+        <div class="email-btn-group">
+          <button class="btn-send-email" onclick="sendEmail()">📤 送信する</button>
+          <button class="btn-skip-email" onclick="skipEmail()">スキップ</button>
+        </div>
+      </div>
+      
+      <div class="result-btns" id="result-default-btns">
+        <button class="btn-retry" id="btn-retry">もう一度挑戦する</button>
+        <button class="btn-home" onclick="showScreen('home')">ホームに戻る</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">記録をリセット</div>
+    <div class="modal-desc">全レベルの正解記録がリセットされます。この操作は元に戻せません。</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeReset()">キャンセル</button>
+      <button class="btn-danger" onclick="doReset()">リセット</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  QUIZ DATA
+// ══════════════════════════════════════════════
+const QUIZZES = {
+  1: [
+    {
+      q: "株式会社指月電機製作所の本社はどこにありますか？",
+      opts: ["大阪府大阪市", "兵庫県西宮市", "東京都千代田区", "愛知県名古屋市"],
+      ans: 1,
+      exp: "指月電機製作所の本社は兵庫県西宮市大社町10番45号にあります。「シヅキ」「SHIZUKI」ブランドで知られています。"
+    },
+    {
+      q: "指月電機製作所が設立されたのはいつですか？",
+      opts: ["1920年（大正9年）", "1939年（昭和14年）", "1955年（昭和30年）", "1961年（昭和36年）"],
+      ans: 1,
+      exp: "1939年3月10日に「指月製作所」として兵庫県西宮市に設立されました。創業から80年以上の歴史を持ちます。"
+    },
+    {
+      q: "指月電機製作所のコア製品は何ですか？",
+      opts: ["半導体", "コンデンサ", "モーター", "センサー"],
+      ans: 1,
+      exp: "創業以来「コンデンサの指月」として知られ、コンデンサの製造開発が事業の中核です。"
+    },
+    {
+      q: "会社の略称・ブランド名として正しいものはどれですか？",
+      opts: ["シスキ（SHISKI）", "シヅキ（SHIZUKI）", "シヅク（SHIZUKU）", "シンキ（SHINKI）"],
+      ans: 1,
+      exp: "会社略称は「指月」および「シヅキ」。「SHIZUKI」ブランドで国内外に製品を展開しています。"
+    },
+    {
+      q: "指月電機製作所が東京証券取引所に上場したのはいつですか？",
+      opts: ["1955年（昭和30年）", "1961年（昭和36年）", "1963年（昭和38年）", "1970年（昭和45年）"],
+      ans: 2,
+      exp: "1961年に大阪証券取引所市場第二部、1963年5月に東京証券取引所市場第二部に上場しました。"
+    },
+    {
+      q: "指月電機製作所の社名の由来となった城はどれですか？",
+      opts: ["姫路城", "大阪城", "指月城（萩城の別名）", "西宮城"],
+      ans: 2,
+      exp: "創業者が山口県萩市出身で、故郷の萩城の別名が「指月城」であることに由来しています。"
+    },
+    {
+      q: "指月電機製作所の筆頭株主はどの会社ですか？",
+      opts: ["パナソニック", "三菱電機", "村田製作所", "東芝"],
+      ans: 1,
+      exp: "三菱電機の持分法適用会社であり、同社が筆頭株主です。ただし三菱グループではなく三菱電機グループに属しています。"
+    },
+    {
+      q: "指月電機製作所の事業コンセプト「3つのテーマ」に含まれないものはどれですか？",
+      opts: ["安全の確保", "公害の防止", "資源の節約", "技術の輸出"],
+      ans: 3,
+      exp: "事業コンセプトの3テーマは①安全の確保、②公害の防止、③資源の節約です。「電気回路を安全に」をコンセプトに商品開発を行っています。"
+    },
+    {
+      q: "指月電機製作所の証券コードはどれですか？",
+      opts: ["6991", "6993", "6994", "6996"],
+      ans: 2,
+      exp: "指月電機製作所の証券コードは6994です。東京証券取引所に上場しています。"
+    },
+    {
+      q: "指月電機製作所の主な製品が活躍する分野として最も適切なものはどれですか？",
+      opts: ["食品加工・農業", "電力・電気・電子", "建設・土木", "医療・介護"],
+      ans: 1,
+      exp: "コンデンサを核とした技術で、電力・電気・電子を含めた電気エネルギー全体をマネジメントする技術が中心です。"
+    }
+  ],
+  2: [
+    {
+      q: "指月電機製作所が手がける「高調波対策」とは何の問題を解決するものですか？",
+      opts: ["騒音による公害", "半導体技術の発展で多様な機器が増えたことで生じる電気障害", "工場排水による水質汚染", "電磁波による通信障害"],
+      ans: 1,
+      exp: "半導体技術の発展で多様な機器が増えたことで電気障害（高調波障害）が多発。指月電機はこれを抑制する各種フィルター装置を提供しています。"
+    },
+    {
+      q: "「低圧進相コンデンサ」の主な役割はどれですか？",
+      opts: ["電圧を昇圧する", "力率を改善して電力を効率的に使用できるようにする", "電流を遮断する", "電力を蓄電する"],
+      ans: 1,
+      exp: "力率改善用の低圧進相コンデンサは、力率を改善して電力の効率的使用を実現します。資源の節約に貢献する代表的な製品です。"
+    },
+    {
+      q: "指月電機製作所が2016年に資本業務提携した会社はどこですか？",
+      opts: ["パナソニック", "TDK", "村田製作所", "京セラ"],
+      ans: 2,
+      exp: "2016年9月に村田製作所と資本業務提携を締結しました。コンデンサ分野での連携強化が目的です。"
+    },
+    {
+      q: "指月電機製作所が2017年に譲渡した事業はどれですか？",
+      opts: ["コンデンサ事業", "電力機器事業", "情報機器システム事業（バス用車載機器等）", "海外販売事業"],
+      ans: 2,
+      exp: "2017年9月に情報機器システム事業（バスの行先表示器・車内案内放送装置等）を小田原機器に譲渡しました。"
+    },
+    {
+      q: "指月電機製作所が製造する「防災形コンデンサ」はどのようなニーズに応えたものですか？",
+      opts: ["地震による停電対策", "ビルの高層化・地下街開発に伴う受変電設備の難燃ニーズ", "台風・洪水時の電力確保", "工場火災の自動消火"],
+      ans: 1,
+      exp: "ビルの高層化や地下街開発の大規模化に伴う受変電設備の難燃ニーズに対応した防災形コンデンサ・装置を広い産業分野に提供しています。"
+    },
+    {
+      q: "指月電機製作所が2003年に移行した会社統治の形態はどれですか？",
+      opts: ["監査役会設置会社", "委員会等設置会社（現：指名委員会等設置会社）", "監査等委員会設置会社", "合同会社"],
+      ans: 1,
+      exp: "2003年6月に委員会等設置会社（現在の指名委員会等設置会社）に移行しました。コーポレートガバナンス改革の先駆けとなりました。"
+    },
+    {
+      q: "指月電機製作所グループの国内製造子会社に含まれないものはどれですか？",
+      opts: ["秋田指月株式会社", "九州指月株式会社", "岡山指月株式会社", "北海道指月株式会社"],
+      ans: 3,
+      exp: "グループ会社には秋田指月・九州指月・岡山指月・指月テクノサービス等があります。北海道指月は存在しません。"
+    },
+    {
+      q: "EV（電気自動車）向けに指月電機が開発した製品はどれですか？",
+      opts: ["EV用モーター", "V2X対応 EV用充放電器「EXCEV（エクシーブ）」", "EV用バッテリー", "EV用制御システム"],
+      ans: 1,
+      exp: "2023年にV2X対応EV用充放電器「EXCEV（エクシーブ）」がCHAdeMO 2.1.1認証を取得。新エネルギー分野への展開を進めています。"
+    },
+    {
+      q: "指月電機製作所のグローバル展開として正しいものはどれですか？",
+      opts: ["アジアにのみ販売拠点を持つ", "タイ・アメリカ・中国などに海外関連会社を持つ", "海外展開は行っていない", "ヨーロッパにのみ工場を持つ"],
+      ans: 1,
+      exp: "アメリカンシヅキ（ASC）、指月獅子起（上海）貿易、タイ指月電機等の海外関連会社があり、世界各国に販売を行っています。"
+    },
+    {
+      q: "指月電機製作所の秋田指月株式会社が2025年4月に竣工させたのは何ですか？",
+      opts: ["第三工場", "第四工場", "第五工場", "本社新社屋"],
+      ans: 2,
+      exp: "2025年4月に「秋田指月株式会社 第五工場」が竣工しました。生産能力の拡大を図っています。"
+    }
+  ],
+  3: [
+    {
+      q: "指月電機製作所の前身「指月製作所」が設立された日付として正確なものはどれですか？",
+      opts: ["1939年1月1日", "1939年3月10日", "1939年6月1日", "1939年12月1日"],
+      ans: 1,
+      exp: "1939年3月10日に指月製作所として設立。同年12月に株式会社に組織変更し「指月電気工業」に商号変更しました。"
+    },
+    {
+      q: "指月電機製作所が戦災により事業停止したのはいつですか？その後の復活は？",
+      opts: ["1943年停止→1946年再発足", "1945年8月停止→1947年9月再発足", "1944年停止→1950年再発足", "1945年停止→1945年再発足"],
+      ans: 1,
+      exp: "1945年8月に戦災により事業停止。その後1947年9月に「株式会社指月電機製作所」として再発足しました。"
+    },
+    {
+      q: "指月電機製作所が1980年代に開発・提供していた交通インフラ向け製品はどれですか？",
+      opts: ["鉄道の自動改札機", "路線バス用運賃表示器", "空港の案内システム", "道路の信号制御装置"],
+      ans: 1,
+      exp: "1980年9月に路線バス用運賃表示器を開発。その後1993年に液晶タイプのバス行先表示器、1994年に音声合成方式のバス車内案内放送装置を開発しました。"
+    },
+    {
+      q: "「フリッカー抑制装置」が解決する問題は何ですか？",
+      opts: ["停電による生産ラインの停止", "電圧変動による電灯や機器のちらつき・障害", "電磁ノイズによる通信障害", "過電流による機器の焼損"],
+      ans: 1,
+      exp: "フリッカー抑制装置は電圧変動障害（フリッカー）を抑制する装置です。指月電機は高調波対策とあわせて電源環境のクリーン化に貢献しています。"
+    },
+    {
+      q: "指月電機製作所と関係のある元プロ野球選手で、日本航空123便墜落事故で亡くなった方は誰ですか？",
+      opts: ["江夏豊（元阪神タイガース）", "竹下元章（元広島カープ）", "田淵幸一（元阪神タイガース）", "山本浩二（元広島カープ）"],
+      ans: 1,
+      exp: "竹下元章氏は元広島東洋カープの選手で、指月電機製作所在籍中に1985年の日本航空123便墜落事故で亡くなりました。"
+    },
+    {
+      q: "指月電機製作所の「電力効率化装置」の仕組みとして正しいものはどれですか？",
+      opts: ["太陽光発電で自家発電する装置", "パワーエレクトロニクス技術で無効電力を高速度に自動制御し電力を効率的に使用できる装置", "大容量バッテリーで電力を蓄える装置", "変電設備の電圧を自動調整する装置"],
+      ans: 1,
+      exp: "パワーエレクトロニクス技術を応用し、無効電力を高速度に自動制御して電力を常に効率的に使用できるようにする装置です。資源節約に貢献します。"
+    },
+    {
+      q: "1975年（昭和50年）以前に製造された古い低圧進相コンデンサに関する注意点は何ですか？",
+      opts: ["絶縁性能が基準を超えているため取り扱い注意", "保安装置が内蔵されていないため交換を呼びかけている", "外国製部品を使用しているため保証対象外", "大型すぎて現在の設備に適合しない"],
+      ans: 1,
+      exp: "1975年以前製造の古い低圧進相コンデンサには保安装置が内蔵されていないため、指月電機は交換を呼びかけています。安全性確保の観点からの重要な案内です。"
+    },
+    {
+      q: "指月電機製作所の主要製品「コンデンサ・モジュール」の用途として正しい組み合わせはどれですか？",
+      opts: ["農業用・医療用・宇宙用", "産業用・住環境用・自動車用・電力設備用", "食品用・建設用・通信用", "鉄鋼用・化学用・航空用"],
+      ans: 1,
+      exp: "コンデンサ・モジュールは産業用・住環境用・自動車用・電力設備用など幅広い分野で活用されています。"
+    },
+    {
+      q: "2026年2月に指月電機製作所が発表した投資家向け情報として正しいものはどれですか？",
+      opts: ["業績下方修正と減配", "通期連結業績予想値の修正および配当予想の修正（増配）", "自社株買いの実施", "上場廃止の検討"],
+      ans: 1,
+      exp: "2026年2月5日に2026年3月期の通期連結業績予想値の修正および配当予想の修正（増配）に関するお知らせが発表されました。"
+    },
+    {
+      q: "指月電機製作所の創業者の出身地で、社名の由来となった城がある市はどこですか？",
+      opts: ["山口県萩市", "兵庫県姫路市", "広島県廿日市市", "島根県松江市"],
+      ans: 0,
+      exp: "創業者は山口県萩市出身で、萩城の別名「指月城」が社名の由来です。萩市は吉田松陰ゆかりの城下町としても有名です。"
+    }
+  ]
+};
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+const KEY = 'shizuki_quiz_v1';
+function getState() {
+  try { return JSON.parse(localStorage.getItem(KEY) || '{}'); }
+  catch { return {}; }
+}
+function setState(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+function getLvState(lv) {
+  return getState()[`lv${lv}`] || { correct: [], wrong: [] };
+}
+function setLvState(lv, data) {
+  const s = getState();
+  s[`lv${lv}`] = data;
+  setState(s);
+}
+
+// ══════════════════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.hbtn').forEach(b => b.classList.remove('active'));
+  if (name === 'home') {
+    document.querySelectorAll('.hbtn')[0].classList.add('active');
+    updateHomeProgress();
+  }
+}
+
+function updateHomeProgress() {
+  let total = 0;
+  [1,2,3].forEach(lv => {
+    const ls = getLvState(lv);
+    const correct = ls.correct ? ls.correct.length : 0;
+    total += correct;
+    const pct = (correct / 10 * 100).toFixed(0);
+    document.getElementById(`bar-lv${lv}`).style.width = pct + '%';
+    document.getElementById(`score-lv${lv}`).textContent = `${correct} / 10 正解`;
+  });
+  document.getElementById('total-cleared').textContent = total;
+}
+
+// ══════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════
+let currentLv = 1;
+let currentQIdx = 0;
+let sessionResults = []; // {correct: bool, qIdx: number}
+
+function startQuiz(lv) {
+  currentLv = lv;
+  currentQIdx = 0;
+  sessionResults = [];
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const lv = currentLv;
+  const qs = QUIZZES[lv];
+  const q = qs[currentQIdx];
+  const total = qs.length;
+  const pct = (currentQIdx / total * 100);
+
+  // badge
+  const badgeEl = document.getElementById('quiz-badge');
+  badgeEl.className = `quiz-level-badge badge-lv${lv}`;
+  badgeEl.textContent = `Level ${lv}`;
+  document.getElementById('quiz-counter').textContent = `${currentQIdx + 1} / ${total}問`;
+  document.getElementById('quiz-prog-fill').style.width = pct + '%';
+  document.getElementById('quiz-prog-fill').className = `quiz-prog-fill fill-lv${lv}`;
+
+  const html = `
+    <div class="question-card">
+      <div class="q-number">問題 ${currentQIdx + 1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((opt, i) => `
+          <button class="option-btn" onclick="answer(${i})" data-idx="${i}">
+            <span class="opt-label">${['ア','イ','ウ','エ'][i]}</span>
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    <div class="answer-panel" id="answer-panel">
+      <div class="answer-result" id="answer-result"></div>
+      <div class="answer-explanation" id="answer-exp"></div>
+    </div>
+    <div class="quiz-actions" id="quiz-actions" style="display:none;">
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">
+        ${currentQIdx < total - 1 ? '次の問題へ →' : '結果を見る'}
+      </button>
+    </div>
+  `;
+  document.getElementById('quiz-content').innerHTML = html;
+}
+
+function answer(selected) {
+  const q = QUIZZES[currentLv][currentQIdx];
+  const isCorrect = selected === q.ans;
+
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    if (i === selected && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  const panel = document.getElementById('answer-panel');
+  const resultEl = document.getElementById('answer-result');
+  const expEl = document.getElementById('answer-exp');
+
+  panel.classList.add('show');
+  if (isCorrect) {
+    resultEl.className = 'answer-result ok';
+    resultEl.textContent = '✅ 正解！';
+  } else {
+    resultEl.className = 'answer-result ng';
+    resultEl.textContent = `❌ 不正解。正解は「${q.opts[q.ans]}」`;
+  }
+  expEl.textContent = q.exp;
+  document.getElementById('quiz-actions').style.display = 'flex';
+
+  sessionResults.push({ correct: isCorrect, qIdx: currentQIdx });
+}
+
+function nextQuestion() {
+  const total = QUIZZES[currentLv].length;
+  if (currentQIdx < total - 1) {
+    currentQIdx++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const lv = currentLv;
+  const qs = QUIZZES[lv];
+  const correctCount = sessionResults.filter(r => r.correct).length;
+  const total = qs.length;
+  const pct = Math.round(correctCount / total * 100);
+
+  // save to state
+  const ls = getLvState(lv);
+  const correctIdxs = sessionResults.filter(r => r.correct).map(r => r.qIdx);
+  const wrongIdxs = sessionResults.filter(r => !r.correct).map(r => r.qIdx);
+  ls.correct = [...new Set([...(ls.correct || []), ...correctIdxs])];
+  ls.wrong = wrongIdxs;
+  setLvState(lv, ls);
+
+  // result messages
+  const msgs = [
+    { min: 90, emoji: '🏆', title: '素晴らしい！', msg: '完璧な理解です。このレベルはマスターしました！' },
+    { min: 70, emoji: '🎉', title: 'よくできました！', msg: 'ほぼ理解できています。惜しかった問題を復習しましょう。' },
+    { min: 50, emoji: '📚', title: 'もう少し！', msg: '基本はOK。間違えた箇所を重点的に復習しましょう。' },
+    { min: 0,  emoji: '💪', title: 'もう一度挑戦！', msg: '復習してから再チャレンジしましょう。必ず上達します！' },
+  ];
+  const m = msgs.find(m => pct >= m.min);
+
+  document.getElementById('result-emoji').textContent = m.emoji;
+  document.getElementById('result-title').textContent = m.title;
+  document.getElementById('result-score').innerHTML = `${correctCount}<span> / ${total}問正解</span>`;
+  document.getElementById('result-msg').textContent = m.msg;
+
+  const bdList = document.getElementById('breakdown-list');
+  bdList.innerHTML = sessionResults.map((r, i) => {
+    const q = qs[r.qIdx];
+    const shortQ = q.q.length > 28 ? q.q.slice(0, 28) + '…' : q.q;
+    return `<li>
+      <span>問${r.qIdx + 1}. ${shortQ}</span>
+      <span class="${r.correct ? 'bd-correct' : 'bd-wrong'}">${r.correct ? '✓ 正解' : '✗ 不正解'}</span>
+    </li>`;
+  }).join('');
+
+  // Level 1 で 5点以上の場合、メールフォームを表示
+  const emailFormWrap = document.getElementById('email-form-wrap');
+  const defaultBtns = document.getElementById('result-default-btns');
+  
+  if (lv === 1 && correctCount >= 5) {
+    emailFormWrap.style.display = 'block';
+    defaultBtns.style.display = 'none';
+  } else {
+    emailFormWrap.style.display = 'none';
+    defaultBtns.style.display = 'flex';
+  }
+
+  document.getElementById('btn-retry').onclick = () => startQuiz(lv);
+
+  showScreen('result');
+}
+
+// ══════════════════════════════════════════════
+//  EMAIL FUNCTIONS
+// ══════════════════════════════════════════════
+function sendEmail() {
+  const userName = document.getElementById('user-name').value.trim();
+  const userEmail = document.getElementById('user-email').value.trim();
+  
+  if (!userName || !userEmail) {
+    showToast('⚠️ お名前とメールアドレスを入力してください');
+    return;
+  }
+  
+  // 簡易的なメールアドレスバリデーション
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(userEmail)) {
+    showToast('⚠️ 有効なメールアドレスを入力してください');
+    return;
+  }
+  
+  const correctCount = sessionResults.filter(r => r.correct).length;
+  const total = QUIZZES[currentLv].length;
+  
+  // メール本文の作成
+  const subject = encodeURIComponent('【シヅキ理解度チェック】Level 1 結果報告');
+  const body = encodeURIComponent(
+    `株式会社指月電機製作所 御中\n\n` +
+    `Level 1 基礎知識の理解度チェックを完了しました。\n\n` +
+    `■ 受験者情報\n` +
+    `お名前: ${userName}\n` +
+    `メールアドレス: ${userEmail}\n\n` +
+    `■ 結果\n` +
+    `正解数: ${correctCount} / ${total}問\n` +
+    `正答率: ${Math.round(correctCount / total * 100)}%\n\n` +
+    `■ 詳細\n` +
+    sessionResults.map((r, i) => 
+      `問${r.qIdx + 1}: ${r.correct ? '✓ 正解' : '✗ 不正解'}`
+    ).join('\n') +
+    `\n\n※ このメールはシヅキ理解度チェックシステムから自動送信されました。`
+  );
+  
+  // mailto リンクを使用してメール送信
+  const mailtoLink = `mailto:wada@shizuki.co.jp?subject=${subject}&body=${body}`;
+  window.location.href = mailtoLink;
+  
+  // 送信後の処理
+  setTimeout(() => {
+    showToast('📧 メーラーを起動しました');
+    document.getElementById('email-form-wrap').style.display = 'none';
+    document.getElementById('result-default-btns').style.display = 'flex';
+  }, 500);
+}
+
+function skipEmail() {
+  document.getElementById('email-form-wrap').style.display = 'none';
+  document.getElementById('result-default-btns').style.display = 'flex';
+  showToast('メール送信をスキップしました');
+}
+
+// ══════════════════════════════════════════════
+//  RESET
+// ══════════════════════════════════════════════
+function confirmReset() {
+  document.getElementById('reset-modal').classList.add('show');
+}
+function closeReset() {
+  document.getElementById('reset-modal').classList.remove('show');
+}
+function doReset() {
+  localStorage.removeItem(KEY);
+  closeReset();
+  showScreen('home');
+  showToast('🗑️ 記録をリセットしました');
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// INIT
+updateHomeProgress();
+</script>
+</body>
+</html>
